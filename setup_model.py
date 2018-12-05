@@ -37,7 +37,6 @@ def build_model(config=dftconfig):
         mdl.add(Activation('relu'))
         mdl.add(Dropout(config['std drop']))
 
-
     mdl.add(Dense(1, activation=None))
 
     sgd = optimizers.SGD(
@@ -55,7 +54,7 @@ def build_model(config=dftconfig):
 
 
 def train_model(mdl, config=dftconfig):
-    df = pd.read_csv('formated_train.csv')
+    df = pd.read_csv('data/formated_train.csv')
     df = df.values
     x = np.array([x[:13] for x in df])
     y = np.array([x[13]/500.0  for x in df])
@@ -78,7 +77,7 @@ def train_model(mdl, config=dftconfig):
 
 
 def show_results(mdl):
-    df = pd.read_csv('formated_train.csv')
+    df = pd.read_csv('data/formated_train.csv')
     df = df.values
     x = np.array([x[:13] for x in df])
     y = np.array([x[13]/500.0  for x in df])
