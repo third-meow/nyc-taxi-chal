@@ -18,7 +18,7 @@ dftconfig = {
         'decay': 1e-6,
         'momentum': 0.9,
         'batch size': 16,
-        'std drop': 0.5,
+        'std drop': 0.7,
         'std nodes': 64,
         'std activation': 'relu',
         'hidden layers': 6,
@@ -30,14 +30,14 @@ def build_model(config=dftconfig):
 
     for i in range(config['hidden layers']):
         if i == 0:
-            mdl.add(Dense(config['std nodes'], input_dim=13))
+            mdl.add(Dense(config['std nodes'], input_dim=13, kernel_initializer='uniform'))
         else:
             mdl.add(Dense(config['std nodes']))
         mdl.add(BatchNormalization())
         mdl.add(Activation('relu'))
         mdl.add(Dropout(config['std drop']))
 
-    mdl.add(Dense(1, activation=None))
+    mdl.add(Dense(1, activation=None, kernel_initializer='uniform'))
 
     sgd = optimizers.SGD(
         lr=config['lr'],
@@ -57,7 +57,7 @@ def train_model(mdl, config=dftconfig):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
     x = np.array([x[:13] for x in df])
-    y = np.array([x[13]/500.0  for x in df])
+    y = np.array([x[13] for x in df])
     splitpoint = int(len(x)/10)
     xtrain, xtest = x[splitpoint:], x[:splitpoint]
     ytrain, ytest = y[splitpoint:], y[:splitpoint]
@@ -80,13 +80,13 @@ def show_results(mdl):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
     x = np.array([x[:13] for x in df])
-    y = np.array([x[13]/500.0  for x in df])
+    y = np.array([x[13] for x in df])
     try:
         for i in range(len(x)):
             print('*'*88)
             print(x[i], end ='\n\n')
-            print(y[i] * 500, end='\t')
-            print((mdl.predict(np.array([x[i]]))[0][0]) * 500)
+            print(y[i], end='\t')
+            print((mdl.predict(np.array([x[i]]))[0][0]))
             print('*'*88)
             _ = input()
     except KeyboardInterrupt:
