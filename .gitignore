@@ -1,0 +1,12 @@
+
+# Pickle files
+*.p
+
+# CSVs
+*.csv
+
+# Logs
+saved/logs/*
+
+# Saved models
+*.h5
