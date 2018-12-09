@@ -20,7 +20,7 @@ def main():
     df = pd.read_csv('data/train.csv',
         engine='c',
         low_memory=False,
-        nrows=100000
+        nrows=1000000
         )
 
     df.set_index('key')

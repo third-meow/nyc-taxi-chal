@@ -10,7 +10,7 @@ import tensorflow.keras as keras
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras import optimizers, regularizers
 from tensorflow.keras.layers import Dense, BatchNormalization, Activation, \
-    AlphaDropout, LeakyReLU
+    AlphaDropout
 
 
 dftconfig = {
@@ -18,9 +18,9 @@ dftconfig = {
         'decay': 1e-2,
         'momentum': 0.9,
         'batch size': 4992,
-        'std drop': 0.98,
+        'std drop': 0.99,
         'std nodes': 128,
-        'std activation': LeakyReLU(alpha=0.2),
+        'std activation': 'relu',
         'epochs': 200,
         'hidden layers': 7,
         }
@@ -34,8 +34,8 @@ def build_model(config=dftconfig):
             mdl.add(Dense(config['std nodes'], input_dim=6))
         else:
             mdl.add(Dense(
-                config['std nodes'],
-                bias_regularizer=regularizers.l2(0.1)))
+                config['std nodes']))
+                #bias_regularizer=regularizers.l2(0.1)))
         mdl.add(BatchNormalization())
         mdl.add(Activation('relu'))
         mdl.add(AlphaDropout(config['std drop']))
