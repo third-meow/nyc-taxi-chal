@@ -14,13 +14,14 @@ from tensorflow.keras.layers import Dense, BatchNormalization, Activation, \
 
 
 dftconfig = {
-        'lr': 0.001,
-        'decay': 1e-6,
+        'lr': 0.0001,
+        'decay': 1e-3,
         'momentum': 0.9,
-        'batch size': 16,
+        'batch size': 512,
         'std drop': 0.7,
         'std nodes': 64,
         'std activation': 'relu',
+        'epochs':10,
         'hidden layers': 6,
         }
 
@@ -30,7 +31,7 @@ def build_model(config=dftconfig):
 
     for i in range(config['hidden layers']):
         if i == 0:
-            mdl.add(Dense(config['std nodes'], input_dim=13, kernel_initializer='uniform'))
+            mdl.add(Dense(config['std nodes'], input_dim=6, kernel_initializer='uniform'))
         else:
             mdl.add(Dense(config['std nodes']))
         mdl.add(BatchNormalization())
@@ -43,7 +44,7 @@ def build_model(config=dftconfig):
         lr=config['lr'],
         decay=config['decay'],
         momentum=config['momentum'],
-        nesterov=True)
+        nesterov=False)
 
     mdl.compile(
         optimizer=sgd,
@@ -56,8 +57,8 @@ def build_model(config=dftconfig):
 def train_model(mdl, config=dftconfig):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
-    x = np.array([x[:13] for x in df])
-    y = np.array([x[13] for x in df])
+    x = np.array([x[1:7] for x in df])
+    y = np.array([x[7] for x in df])
     splitpoint = int(len(x)/10)
     xtrain, xtest = x[splitpoint:], x[:splitpoint]
     ytrain, ytest = y[splitpoint:], y[:splitpoint]
@@ -69,7 +70,9 @@ def train_model(mdl, config=dftconfig):
         xtrain,
         ytrain,
         batch_size=config['batch size'],
-        epochs=10,
+        epochs=config['epochs'],
+        callbacks=[tensorboard],
+        validation_data=(xtest, ytest)
     )
 
     score = mdl.evaluate(xtest, ytest, verbose=1)
@@ -79,8 +82,8 @@ def train_model(mdl, config=dftconfig):
 def show_results(mdl):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
-    x = np.array([x[:13] for x in df])
-    y = np.array([x[13] for x in df])
+    x = np.array([x[1:7] for x in df])
+    y = np.array([x[7] for x in df])
     try:
         for i in range(len(x)):
             print('*'*88)
