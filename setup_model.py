@@ -14,15 +14,15 @@ from tensorflow.keras.layers import Dense, BatchNormalization, Activation, \
 
 
 dftconfig = {
-        'lr': 0.001,
-        'decay': 1e-3,
+        'lr': 0.01,
+        'decay': 1e-2,
         'momentum': 0.9,
         'batch size': 4992,
         'std drop': 0.98,
-        'std nodes': 64,
+        'std nodes': 128,
         'std activation': LeakyReLU(alpha=0.2),
-        'epochs': 500,
-        'hidden layers': 6,
+        'epochs': 200,
+        'hidden layers': 7,
         }
 
 
