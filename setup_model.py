@@ -7,10 +7,10 @@ import pandas as pd
 
 import tensorflow as tf
 import tensorflow.keras as keras
-from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras import optimizers, regularizers
 from tensorflow.keras.layers import Dense, BatchNormalization, Activation, \
-    Dropout
+    AlphaDropout
 
 
 dftconfig = {
@@ -18,10 +18,10 @@ dftconfig = {
         'decay': 1e-3,
         'momentum': 0.9,
         'batch size': 512,
-        'std drop': 0.7,
+        'std drop': 0.95,
         'std nodes': 64,
         'std activation': 'relu',
-        'epochs':10,
+        'epochs':80,
         'hidden layers': 6,
         }
 
@@ -31,14 +31,16 @@ def build_model(config=dftconfig):
 
     for i in range(config['hidden layers']):
         if i == 0:
-            mdl.add(Dense(config['std nodes'], input_dim=6, kernel_initializer='uniform'))
+            mdl.add(Dense(config['std nodes'], input_dim=6))
         else:
-            mdl.add(Dense(config['std nodes']))
+            mdl.add(Dense(
+                config['std nodes'],
+                bias_regularizer=regularizers.l2(0.1)))
         mdl.add(BatchNormalization())
         mdl.add(Activation('relu'))
-        mdl.add(Dropout(config['std drop']))
+        mdl.add(AlphaDropout(config['std drop']))
 
-    mdl.add(Dense(1, activation=None, kernel_initializer='uniform'))
+    mdl.add(Dense(1))
 
     sgd = optimizers.SGD(
         lr=config['lr'],
