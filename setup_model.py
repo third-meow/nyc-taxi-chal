@@ -14,14 +14,14 @@ from tensorflow.keras.layers import Dense, BatchNormalization, Activation, \
 
 
 dftconfig = {
-        'lr': 0.01,
-        'decay': 1e-2,
-        'momentum': 0.9,
+        'lr': 0.04,
+        'decay': 0.00005, 
+        'momentum': 0.925,
         'batch size': 4992,
-        'std drop': 0.99,
-        'std nodes': 128,
+        'std drop': 0.995,
+        'std nodes': 72,
         'std activation': 'relu',
-        'epochs': 200,
+        'epochs': 100,
         'hidden layers': 7,
         }
 
@@ -31,11 +31,10 @@ def build_model(config=dftconfig):
 
     for i in range(config['hidden layers']):
         if i == 0:
-            mdl.add(Dense(config['std nodes'], input_dim=6))
+            mdl.add(Dense(config['std nodes'], input_dim=13))
         else:
-            mdl.add(Dense(
-                config['std nodes']))
-                #bias_regularizer=regularizers.l2(0.1)))
+            mdl.add(Dense(config['std nodes']))
+
         mdl.add(BatchNormalization())
         mdl.add(Activation('relu'))
         mdl.add(AlphaDropout(config['std drop']))
@@ -59,8 +58,8 @@ def build_model(config=dftconfig):
 def train_model(mdl, config=dftconfig):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
-    x = np.array([x[1:7] for x in df])
-    y = np.array([x[7] for x in df])
+    x = np.array([x[:13] for x in df])
+    y = np.array([x[13] for x in df])
     splitpoint = int(len(x)/10)
     xtrain, xtest = x[splitpoint:], x[:splitpoint]
     ytrain, ytest = y[splitpoint:], y[:splitpoint]
@@ -84,8 +83,8 @@ def train_model(mdl, config=dftconfig):
 def show_results(mdl):
     df = pd.read_csv('data/formated_train.csv')
     df = df.values
-    x = np.array([x[1:7] for x in df])
-    y = np.array([x[7] for x in df])
+    x = np.array([x[:13] for x in df])
+    y = np.array([x[13] for x in df])
     try:
         for i in range(len(x)):
             print('*'*88)
